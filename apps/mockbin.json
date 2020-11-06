@@ -1,0 +1,41 @@
+{
+  "name": "mockbin-api",
+  "api_id": "mockbin-api",
+  "use_openid": true,
+  "openid_options": {
+    "providers": [
+      {
+        "issuer": "http://192.168.1.157:8180/auth/realms/master",
+        "client_ids": {
+          "dHlr": "default"
+        }
+      }
+    ],
+    "segregate_by_client": false
+  },
+  "auth": {
+    "auth_header_name": "authorization"
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "default": {
+          "name": "default",
+          "expires": "3000-01-02 15:04",
+          "use_extended_paths": true,
+          "extended_paths": {
+              "ignored": [],
+              "white_list": [],
+              "black_list": []
+          }
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/mock/",
+    "target_url": "http://mockbin.org/request",
+    "strip_listen_path": true
+  },
+  "active": true
+}
+  

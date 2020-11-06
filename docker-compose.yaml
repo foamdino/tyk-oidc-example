@@ -1,0 +1,74 @@
+version: '3.7'
+
+networks:
+  tyk:
+    external: false
+  keycloak-net:
+    external: false
+
+volumes:
+  redis-data: {}
+  keycloak-data: {} 
+
+services:
+  tyk-redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - tyk
+
+  tyk-gateway:
+    image: tykio/tyk-gateway:v3.0.0
+    ports:
+      - "8080:8080"
+    networks:
+      - tyk
+    depends_on:
+      - tyk-redis
+    volumes:
+      - ./confs/tyk.conf:/opt/tyk-gateway/tyk.conf
+      - ./apps:/opt/tyk-gateway/apps
+      - ./policies:/opt/tyk-gateway/policies
+
+  keycloak-db:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    networks:
+      - keycloak-net
+    ports:
+      - "25432:5432"
+    volumes:
+      - keycloak-data:/var/lib/postresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "keycloak"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+  
+  keycloak:
+    image: jboss/keycloak:11.0.2
+    depends_on:
+      - keycloak-db
+    networks:
+      - keycloak-net
+    ports:
+      - "8180:8080"
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-db
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin

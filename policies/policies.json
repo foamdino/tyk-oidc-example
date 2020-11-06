@@ -1,0 +1,21 @@
+{
+    "default": {
+        "id": "default",
+        "rate": 100,
+        "per": 1,
+        "quota_max": -1,
+        "quota_renews": -1,
+        "quota_remaining": 0,
+        "quota_renewal_rate": 60,
+        "access_rights": {
+          "mockbin-api": {
+            "api_name": "mockbin-api",
+            "api_id": "mockbin-api",
+            "versions": [
+              "default"
+            ]
+          }
+        },
+        "active": true
+    }
+}
